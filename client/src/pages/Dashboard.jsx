@@ -133,6 +133,8 @@ function Dashboard() {
         setAdditionalPrompts(text);
         setWordCount((prev) => ({ ...prev, prompts: count }));
       }
+    } else {
+      alert('Text cannot exceed 1000 words');
     }
   };
 
