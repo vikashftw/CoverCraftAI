@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Sparkles,
   UserCircle2,
@@ -14,9 +14,9 @@ import {
   Twitter,
   Globe,
   Loader,
-} from 'lucide-react';
-import { SiLeetcode } from 'react-icons/si';
-import UserProfile from '../components/UserProfile';
+} from "lucide-react";
+import { SiLeetcode } from "react-icons/si";
+import UserProfile from "../components/UserProfile";
 
 function Dashboard() {
   // Get user, loading, and error status from your UserProfile component.
@@ -24,11 +24,11 @@ function Dashboard() {
 
   // Default social links in case none exist
   const defaultSocials = {
-    linkedin: '',
-    twitter: '',
-    github: '',
-    website: '',
-    leetcode: '',
+    linkedin: "",
+    twitter: "",
+    github: "",
+    website: "",
+    leetcode: "",
   };
 
   // State for socials – initially set to default values; once user data loads, we’ll update these.
@@ -37,15 +37,15 @@ function Dashboard() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [resumes, setResumes] = useState([
     {
-      name: 'Resume_2024.pdf',
-      url: '#',
-      type: 'application/pdf',
+      name: "Resume_2024.pdf",
+      url: "#",
+      type: "application/pdf",
     },
   ]);
-  const [selectedResume, setSelectedResume] = useState('Resume_2024.pdf');
-  const [jobDescription, setJobDescription] = useState('');
-  const [additionalPrompts, setAdditionalPrompts] = useState('');
-  const [outputFormat, setOutputFormat] = useState('pdf');
+  const [selectedResume, setSelectedResume] = useState("Resume_2024.pdf");
+  const [jobDescription, setJobDescription] = useState("");
+  const [additionalPrompts, setAdditionalPrompts] = useState("");
+  const [outputFormat, setOutputFormat] = useState("pdf");
   const [isDraggingResume, setIsDraggingResume] = useState(false);
   const [isDraggingJob, setIsDraggingJob] = useState(false);
   const [wordCount, setWordCount] = useState({ job: 0, prompts: 0 });
@@ -57,15 +57,18 @@ function Dashboard() {
   // When the profile menu is open, close it if a click is detected outside the menu.
   useEffect(() => {
     function handleClickOutside(event) {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
         setShowProfileMenu(false);
       }
     }
     if (showProfileMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showProfileMenu]);
 
@@ -78,7 +81,10 @@ function Dashboard() {
 
   // Helper function to calculate word count.
   const calculateWordCount = (text) => {
-    return text.trim().split(/\s+/).filter((word) => word.length > 0).length;
+    return text
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0).length;
   };
 
   // Show a loading screen, error message, or "no user" message as needed.
@@ -126,7 +132,7 @@ function Dashboard() {
     const text = e.target.value;
     const count = calculateWordCount(text);
     if (count <= 1000) {
-      if (type === 'job') {
+      if (type === "job") {
         setJobDescription(text);
         setWordCount((prev) => ({ ...prev, job: count }));
       } else {
@@ -134,7 +140,7 @@ function Dashboard() {
         setWordCount((prev) => ({ ...prev, prompts: count }));
       }
     } else {
-      alert('Text cannot exceed 1000 words');
+      alert("Text cannot exceed 1000 words");
     }
   };
 
@@ -143,7 +149,7 @@ function Dashboard() {
     if (files && files[0] && resumes.length < 5) {
       const file = files[0];
       if (file.size > 2 * 1024 * 1024) {
-        alert('File size must be less than 2MB');
+        alert("File size must be less than 2MB");
         return;
       }
       const newResume = {
@@ -160,14 +166,14 @@ function Dashboard() {
   const handleFileDrop = (e, type) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (type === 'resume') {
+    if (type === "resume") {
       setIsDraggingResume(false);
       handleResumeUpload([file]);
     } else {
       setIsDraggingJob(false);
       const reader = new FileReader();
       reader.onload = (event) => {
-        handleTextChange({ target: { value: event.target.result } }, 'job');
+        handleTextChange({ target: { value: event.target.result } }, "job");
       };
       reader.readAsText(file);
     }
@@ -176,13 +182,13 @@ function Dashboard() {
   // When the user clicks to generate a cover letter, validate input.
   const handleGenerateCoverLetter = () => {
     if (!selectedResume) {
-      alert('Please select a resume');
+      alert("Please select a resume");
       return;
     } else if (!jobDescription) {
-      alert('Please enter job description');
+      alert("Please enter job description");
       return;
     } else if (wordCount.job > 1000 || wordCount.prompts > 1000) {
-      alert('Please keep text under 1000 words');
+      alert("Please keep text under 1000 words");
       return;
     }
     // TODO: Handle OpenAI API call to generate cover letter.
@@ -201,29 +207,28 @@ function Dashboard() {
     if (showSocialEdit) {
       // User is finishing editing; send update to backend.
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         const response = await fetch(`/api/auth/social`, {
-          method: 'PATCH',
+          method: "PATCH",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
           // Send the entire socials object.
           body: JSON.stringify({ socials }),
         });
         if (!response.ok) {
-          console.error('Failed to update social links in the database');
+          console.error("Failed to update social links in the database");
         } else {
-          console.log('Social links updated successfully');
+          console.log("Social links updated successfully");
         }
       } catch (error) {
-        console.error('Error updating social links:', error);
+        console.error("Error updating social links:", error);
       }
     }
     // Toggle edit mode.
     setShowSocialEdit((prev) => !prev);
   };
-  
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] overflow-hidden relative">
@@ -247,7 +252,11 @@ function Dashboard() {
                 className="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-400/50 hover:border-blue-400 transition-colors duration-300"
               >
                 {user.avatar ? (
-                  <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                  <img
+                    src={user.avatar}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <UserCircle2 className="w-full h-full text-gray-400" />
                 )}
@@ -267,7 +276,9 @@ function Dashboard() {
                       <UserCircle2 className="w-12 h-12 text-gray-400" />
                     )}
                     <div>
-                      <h3 className="text-white font-semibold">{user.username}</h3>
+                      <h3 className="text-white font-semibold">
+                        {user.username}
+                      </h3>
                       <p className="text-gray-400 text-sm">{user.email}</p>
                     </div>
                   </div>
@@ -275,23 +286,33 @@ function Dashboard() {
                   {/* Social Links Section */}
                   <div className="mb-4 pb-4 border-b border-white/10">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-white font-semibold">Connected Accounts</h4>
+                      <h4 className="text-white font-semibold">
+                        Connected Accounts
+                      </h4>
                       <button
                         onClick={handleToggleSocialEdit}
                         className="text-blue-400 hover:text-blue-300 text-sm"
                       >
-                        {showSocialEdit ? 'Done' : 'Edit'}
+                        {showSocialEdit ? "Done" : "Edit"}
                       </button>
                     </div>
 
                     {showSocialEdit ? (
                       <div className="space-y-2">
                         {Object.entries(socials).map(([platform, url]) => (
-                          <div key={platform} className="flex items-center gap-2">
+                          <div
+                            key={platform}
+                            className="flex items-center gap-2"
+                          >
                             <input
                               type="text"
                               value={url}
-                              onChange={(e) => handleSocialInputChange(platform, e.target.value)}
+                              onChange={(e) =>
+                                handleSocialInputChange(
+                                  platform,
+                                  e.target.value
+                                )
+                              }
                               placeholder={`Enter ${platform} URL`}
                               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50"
                             />
@@ -310,11 +331,21 @@ function Dashboard() {
                                 rel="noopener noreferrer"
                                 className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-300"
                               >
-                                {platform === 'linkedin' && <Linkedin className="w-5 h-5 text-blue-400" />}
-                                {platform === 'github' && <Github className="w-5 h-5 text-gray-400" />}
-                                {platform === 'twitter' && <Twitter className="w-5 h-5 text-blue-400" />}
-                                {platform === 'website' && <Globe className="w-5 h-5 text-green-400" />}
-                                {platform === 'leetcode' && <SiLeetcode className="w-5 h-5 text-amber-500" />}
+                                {platform === "linkedin" && (
+                                  <Linkedin className="w-5 h-5 text-blue-400" />
+                                )}
+                                {platform === "github" && (
+                                  <Github className="w-5 h-5 text-gray-400" />
+                                )}
+                                {platform === "twitter" && (
+                                  <Twitter className="w-5 h-5 text-blue-400" />
+                                )}
+                                {platform === "website" && (
+                                  <Globe className="w-5 h-5 text-green-400" />
+                                )}
+                                {platform === "leetcode" && (
+                                  <SiLeetcode className="w-5 h-5 text-amber-500" />
+                                )}
                               </a>
                             )
                         )}
@@ -324,16 +355,22 @@ function Dashboard() {
 
                   {/* Resumes Section */}
                   <div className="mb-4">
-                    <h4 className="text-white font-semibold mb-2">Your Resumes</h4>
+                    <h4 className="text-white font-semibold mb-2">
+                      Your Resumes
+                    </h4>
                     <div className="space-y-2">
                       {resumes.map((resume, index) => (
                         <div
                           key={index}
                           className="flex items-center justify-between bg-white/5 rounded-lg p-2"
                         >
-                          <span className="text-gray-300 text-sm truncate">{resume.name}</span>
+                          <span className="text-gray-300 text-sm truncate">
+                            {resume.name}
+                          </span>
                           <button
-                            onClick={() => setResumes(resumes.filter((_, i) => i !== index))}
+                            onClick={() =>
+                              setResumes(resumes.filter((_, i) => i !== index))
+                            }
                             className="text-gray-400 hover:text-red-400"
                           >
                             <X className="w-4 h-4" />
@@ -384,8 +421,8 @@ function Dashboard() {
                   onClick={() => setSelectedResume(resume.name)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 whitespace-nowrap ${
                     selectedResume === resume.name
-                      ? 'bg-blue-500/20 border-blue-500/50 text-white'
-                      : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                      ? "bg-blue-500/20 border-blue-500/50 text-white"
+                      : "bg-white/5 border-white/10 text-gray-300 hover:bg-white/10"
                   }`}
                 >
                   <FileText className="w-4 h-4" />
@@ -405,7 +442,9 @@ function Dashboard() {
           ) : (
             <div className="text-center bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10">
               <AlertCircle className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No Resume Found</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                No Resume Found
+              </h3>
               <p className="text-gray-400 mb-4">
                 Please add a resume to begin creating your cover letter
               </p>
@@ -432,22 +471,24 @@ function Dashboard() {
             <div
               className={`absolute inset-0 rounded-xl transition-colors duration-300 ${
                 isDraggingJob
-                  ? 'bg-blue-500/20 border-2 border-dashed border-blue-500/50'
-                  : ''
+                  ? "bg-blue-500/20 border-2 border-dashed border-blue-500/50"
+                  : ""
               }`}
               onDragOver={(e) => {
                 e.preventDefault();
                 setIsDraggingJob(true);
               }}
               onDragLeave={() => setIsDraggingJob(false)}
-              onDrop={(e) => handleFileDrop(e, 'job')}
+              onDrop={(e) => handleFileDrop(e, "job")}
             ></div>
             <div className="bg-black/40 backdrop-blur-xl rounded-xl border border-white/10 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-white">Job Description</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  Job Description
+                </h2>
                 <span
                   className={`text-sm ${
-                    wordCount.job > 900 ? 'text-red-400' : 'text-gray-400'
+                    wordCount.job > 900 ? "text-red-400" : "text-gray-400"
                   }`}
                 >
                   {wordCount.job}/1000 words
@@ -455,7 +496,7 @@ function Dashboard() {
               </div>
               <textarea
                 value={jobDescription}
-                onChange={(e) => handleTextChange(e, 'job')}
+                onChange={(e) => handleTextChange(e, "job")}
                 placeholder="Paste job description here or drag & drop a file..."
                 className="w-full h-64 bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition-colors duration-300"
               />
@@ -473,7 +514,7 @@ function Dashboard() {
                             preventDefault: () => {},
                             dataTransfer: { files: [file] },
                           },
-                          'job'
+                          "job"
                         );
                     }}
                   />
@@ -482,7 +523,9 @@ function Dashboard() {
                     Upload File
                   </div>
                 </label>
-                <span className="text-gray-500 text-sm">PDF, DOCX, PNG, JPG (max 2MB)</span>
+                <span className="text-gray-500 text-sm">
+                  PDF, DOCX, PNG, JPG (max 2MB)
+                </span>
               </div>
             </div>
           </div>
@@ -490,10 +533,12 @@ function Dashboard() {
           {/* Additional Prompts */}
           <div className="bg-black/40 backdrop-blur-xl rounded-xl border border-white/10 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-white">Customize Your Cover Letter</h2>
+              <h2 className="text-xl font-semibold text-white">
+                Customize Your Cover Letter
+              </h2>
               <span
                 className={`text-sm ${
-                  wordCount.prompts > 900 ? 'text-red-400' : 'text-gray-400'
+                  wordCount.prompts > 900 ? "text-red-400" : "text-gray-400"
                 }`}
               >
                 {wordCount.prompts}/1000 words
@@ -501,7 +546,7 @@ function Dashboard() {
             </div>
             <textarea
               value={additionalPrompts}
-              onChange={(e) => handleTextChange(e, 'prompts')}
+              onChange={(e) => handleTextChange(e, "prompts")}
               placeholder="Add any specific requirements or preferences for your cover letter..."
               className="w-full h-64 bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition-colors duration-300"
             />
