@@ -3,10 +3,12 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import cors from 'cors';
 
 import userRouter from './routes/user.route.js';
 import resumeRouter from './routes/resume.route.js';
 import generateRouter from './routes/generate.route.js';
+import authRouter from './routes/auth.route.js';
 
 dotenv.config();
 
@@ -18,6 +20,7 @@ mongoose
   const __dirname = path.resolve();
 
 const app = express();
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -25,6 +28,7 @@ app.use(cookieParser());
 app.use('/api/user', userRouter);
 app.use('/api/resume', resumeRouter);
 app.use('/api/generate', generateRouter);
+app.use('/api/auth', authRouter);
 
 
 app.use(express.static(path.join(__dirname, '/client/dist')));
