@@ -143,7 +143,7 @@ function Home() {
                       <Star className="w-8 h-8" />
                     </div>
                     <h3 className="text-xl font-semibold text-white mb-3">Perfect Customization</h3>
-                    <p className="text-gray-300">Store up to 5 resumes and generate unique cover letters perfectly matched to each job description.</p>
+                    <p className="text-gray-300">Store up to 5 resumes and generate truly unique cover letters that are flawlessly tailored to every job description.</p>
                   </div>
                 </div>
                 <div className="group relative">
@@ -153,7 +153,7 @@ function Home() {
                       <Zap className="w-8 h-8" />
                     </div>
                     <h3 className="text-xl font-semibold text-white mb-3">Instant Results</h3>
-                    <p className="text-gray-300">Get professionally crafted cover letters in seconds, not hours. Save time without sacrificing quality.</p>
+                    <p className="text-gray-300">Get professionally crafted cover letters in seconds, not hours. Save time without sacrificing quality or detail.</p>
                   </div>
                 </div>
               </div>
